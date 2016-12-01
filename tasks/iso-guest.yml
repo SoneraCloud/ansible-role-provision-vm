@@ -1,0 +1,56 @@
+---
+
+# Most of this code will run on the hypervisor as defined by the hyper varible
+# We use a block to reduce repeating the 'delegate_to' for every task
+- block:
+
+# COMMENTED OUT FOR TESTING
+  # Fetch ISO-image.
+#  - name: Download specified image
+#    get_url:
+#      url: "{{ image_url_prefix }}/{{ image_name }}"
+#      dest: "{{ image_path}}/{{ image_name }}"
+#      mode: 0400
+#      owner: qemu
+#      backup: yes
+#    become: yes
+
+
+  - name: Copy the iso boot image for this guest
+    copy:
+      remote_src: true
+#      src: "{{ runtime_tempdir }}/cloud-init.iso"
+# TESTING
+      src: /root/{{ image_name }}
+      dest: "{{ image_path}}/{{ fqdn }}.iso"
+      mode: 0400
+      owner: qemu
+      group: qemu
+    become: yes
+
+  - name: Create hard disk image for this guest
+    command: qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}.qcow2 {{ root_disk_size }}G
+    become: yes
+
+  - name: Copy the qcow2 hard disk image for this guest
+    copy:
+      remote_src: true
+      src: "{{ image_path}}/{{ image_name }}"
+      dest: "{{ image_path}}/{{ fqdn }}.qcow2"
+      mode: 0600
+      owner: qemu
+      group: qemu
+    become: yes
+
+  # This fact is picked up by the virt-install-command-iso.j2 template and
+  # configures the VMs root disk
+  - name: Set the disk fact
+    set_fact:
+      disks:
+        - path: "{{ image_path}}/{{ fqdn }}.qcow2"
+          size: "{{ root_disk_size }}"
+          format: qcow2
+
+  # End of block
+  delegate_to: "{{ hyper }}"
+...
