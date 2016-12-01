@@ -8,7 +8,7 @@ virt-install \
 {% for bridge in bridges %}
   --network bridge={{ bridge }},model=virtio \
 {% endfor %}
-  --boot=cdrom,hd
+  --boot=cdrom,hd \
   --connect=qemu:///system \
   --autostart \
   --noautoconsole \
