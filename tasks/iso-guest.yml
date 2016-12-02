@@ -20,15 +20,11 @@
     copy:
       remote_src: true
       src: "{{ image_path}}/{{ image_name }}"
-# TESTING without HTTP-server
-#      src: /root/{{ image_name }}
       dest: "{{ image_path}}/{{ fqdn }}.iso"
       mode: 0400
       owner: qemu
       group: qemu
     become: yes
-
-# TODO: This is the point where ISO-image could be customized with preseed.
 
   - name: Delete old hard disk image for this guest
     file: 
@@ -47,16 +43,6 @@
       group: qemu
       mode: 0600
     become: yes
-
-#  - name: Copy the qcow2 hard disk image for this guest
-#    copy:
-#      remote_src: true
-#      src: "{{ image_path}}/{{ image_name }}"
-#      dest: "{{ image_path}}/{{ fqdn }}.qcow2"
-#      mode: 0600
-#      owner: qemu
-#      group: qemu
-#    become: yes
 
   # This fact is picked up by the virt-install-command-iso.j2 template and
   # configures the VMs root disk
