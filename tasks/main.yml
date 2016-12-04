@@ -163,7 +163,7 @@
   register: setup
   until: setup | succeeded
   retries: 3
-  delay: 10
+  delay: 15
   when:
     - guest_type is defined
     - guest_type == 'image'
