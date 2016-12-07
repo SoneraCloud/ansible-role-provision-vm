@@ -27,7 +27,7 @@
     become: yes
 
   - name: Delete old hard disk image for this guest
-    file: 
+    file:
       path: "{{ image_path}}/{{ fqdn }}.qcow2"
       state: absent
     become: yes
