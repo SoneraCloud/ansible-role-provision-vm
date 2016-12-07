@@ -68,8 +68,10 @@
     become: yes
 
   # This includes playbook defined optional hook to modify the image if needed
-  - include: "{{ hook_variable | default(lookup('pipe', 'pwd') ~ '/hooks/empty.yml') }}"
-    when: hook_variable is defined
+  - name: Include optional code to modify the image before launch
+#    include: "{{ provision_vm_image_fixup_hook | default(lookup('pipe', 'pwd') ~ '/hooks/empty.yml') }}"
+    include: "{{ provision_vm_image_fixup_hook | default(omit) }}"
+    when: provision_vm_image_fixup_hook is defined
     become: yes
 
   - name: Copy guestfish script to fix CentOS 7 image to disable DHCP on eth0
