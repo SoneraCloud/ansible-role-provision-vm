@@ -101,7 +101,7 @@
   environment: "{{ env_virt_install | default(omit) }}"
   delegate_to: "{{ hyper }}"
   register: virt_install_job
-  when: 
+  when:
     - guest_exists | failed
     - guest_type is undefined or guest_type == 'image'
 
@@ -113,8 +113,8 @@
   environment: "{{ env_virt_install | default(omit) }}"
   delegate_to: "{{ hyper }}"
   register: virt_install_job
-  when: 
-    - guest_exists | failed 
+  when:
+    - guest_exists | failed
     - guest_type == 'iso'
 
   # Force ansible to know the IP address of this host so it can connect
