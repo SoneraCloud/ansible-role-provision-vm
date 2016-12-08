@@ -27,6 +27,9 @@ ram: 1024
 # Default environment name (suggested use case: dev/test/prod)
 environment: default-environment
 
+# Timeout to wait for VM to be accessible by SSH
+vm_install_timeout: 300
+
 #################################################
 # Kickstart based deployment settings ###########
 #################################################

@@ -26,5 +26,6 @@ virt-install \
 {% else %}
   --events on_poweroff=preserve \
   --disk path={{ image_path}}/{{ fqdn }}.iso,device=cdrom,perms=ro \
-  --os-type=linux
+  --os-type=linux \
+  --cpu={{ cpu_type | default('host-model') }}
 {% endif %}

@@ -67,6 +67,12 @@
       group: qemu
     become: yes
 
+  # This includes playbook defined optional hook to modify the image if needed
+  - name: Include optional code to modify the image before launch
+    include: "{{ provision_vm_image_fixup_hook | default(omit) }}"
+    when: provision_vm_image_fixup_hook is defined
+    become: yes
+
   - name: Copy guestfish script to fix CentOS 7 image to disable DHCP on eth0
     template:
       src: modify-centos-image.guestfish.j2
