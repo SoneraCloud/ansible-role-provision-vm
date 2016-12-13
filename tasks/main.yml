@@ -195,7 +195,7 @@
   register: setup
   until: setup | succeeded
   retries: 3
-  delay: 15
+  delay: 20
   when:
     - guest_type is defined
     - guest_type == 'image'
@@ -208,5 +208,5 @@
   delegate_to: "{{ hyper }}"
   when: 
     - guest_exists | failed
-    - debug_mode not defined or debug_mode=='false'
+    - debug_mode is not defined or debug_mode=='false'
 ...
