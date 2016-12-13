@@ -16,4 +16,5 @@ virt-install \
   --graphics vnc,listen=0.0.0.0 \
   --events on_poweroff=preserve \
   --os-type=linux \
-  --os-variant=generic
+  --os-variant=generic \
+  --cpu={{ cpu_type | default('host-model') }}
