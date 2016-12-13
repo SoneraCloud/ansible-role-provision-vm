@@ -91,7 +91,9 @@
     dest: "{{runtime_tempdir}}/virt-install-script.sh.j2"
   become: yes
   delegate_to: "{{ hyper }}"
-  when: guest_exists | failed
+  when: 
+    - guest_exists | failed
+    - guest_type is not defined or guest_type == 'image'
 
 - name: Deploy script to deploy VM from ISO image
   template:
