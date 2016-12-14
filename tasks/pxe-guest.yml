@@ -4,18 +4,29 @@
 # We use a block to reduce repeating the 'delegate_to' for every task
 - block:
 
-  - name: Delete old hard disk image for this guest
+  - name: Delete old root disk image for this guest
     file:
       path: "{{ image_path}}/{{ fqdn }}.qcow2"
       state: absent
     become: yes
 
-# TODO: Maybe multiple disks needed /dev/sda + /dev/sdb ?????
-  - name: Create new hard disk image for this guest
-    command: qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}.qcow2 {{ root_disk_size }}G
+  - name: Delete old extra disk image for this guest
+    file:
+      path: "{{ image_path}}/{{ fqdn }}_extra.qcow2"
+      state: absent
+    become: yes
+    when: extra_disk_size is defined
+
+  - name: Create new root disk image for this guest
+    command: "qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}.qcow2 {{ root_disk_size }}G"
     become: yes
 
-  - name: Set owner and permissions of hard disk image
+  - name: Create new extra disk image for this guest
+    command: "qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}_extra.qcow2 {{ extra_disk_size }}G"
+    become: yes
+    when: extra_disk_size is defined
+
+  - name: Set owner and permissions of root disk image
     file:
       path: "{{ image_path}}/{{ fqdn }}.qcow2"
       owner: qemu
@@ -23,14 +34,35 @@
       mode: 0600
     become: yes
 
+  - name: Set owner and permissions of extra disk image
+    file:
+      path: "{{ image_path}}/{{ fqdn }}_extra.qcow2"
+      owner: qemu
+      group: qemu
+      mode: 0600
+    become: yes
+    when: extra_disk_size is defined
+
   # This fact is picked up by the virt-install-command-pxe.j2 template and
   # configures the VMs root disk
-  - name: Set the disk fact
+  - name: Set the root disk fact
     set_fact:
       disks:
         - path: "{{ image_path}}/{{ fqdn }}.qcow2"
           size: "{{ root_disk_size }}"
           format: qcow2
+    when: extra_disk_size is not defined
+
+  - name: Set fact for root and extra disk
+    set_fact:
+      disks:
+        - path: "{{ image_path}}/{{ fqdn }}.qcow2"
+          size: "{{ root_disk_size }}"
+          format: qcow2
+        - path: "{{ image_path}}/{{ fqdn }}_extra.qcow2"
+          size: "{{ extra_disk_size }}"
+          format: qcow2
+    when: extra_disk_size is defined
 
   # End of block
   delegate_to: "{{ hyper }}"

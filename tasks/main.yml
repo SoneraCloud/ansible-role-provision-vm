@@ -163,7 +163,9 @@
     timeout: "{{ vm_install_timeout }}"
     search_regex: OpenSSH
   delegate_to: "{{ bastion_host | default(hyper) }}"
-  when: guest_exists | failed
+  when: 
+    - guest_exists | failed
+    - guest_type is not defined or guest_type=='image' 
 
   # This attempts to handle the common case where the new VM has a new and
   # unknown host key, because you just rebuilt this VM. Modern linux distro's
