@@ -6,7 +6,11 @@ virt-install \
   --disk path={{ disk.path }},cache=writethrough,device=disk,bus=scsi,size={{ disk.size }},format={{ disk.format | default('raw') }} \
 {% endfor %}
 {% for bridge in bridges %}
+{% if bridge.guest_mac_address is defined %}
   --network bridge={{ bridge.host_bridge }},mac={{ bridge.guest_mac_address }},model=virtio \
+{% else %}
+  --network bridge={{ bridge.host_bridge }},model=virtio \
+{% endif %}
 {% endfor %}
   --pxe \
   --boot=network,hd \
