@@ -155,6 +155,7 @@
   # This fixes things if you don't have the IP address in DNS or /etc/hosts.
 - name: Set ansible_host to the new guest IP address
   set_fact: ansible_host={{ internal_ip }}
+  when: internal_ip is defined
 
 - name: wait for VM to become available before continuing
   wait_for:
