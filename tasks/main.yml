@@ -91,7 +91,7 @@
     dest: "{{runtime_tempdir}}/virt-install-script.sh.j2"
   become: yes
   delegate_to: "{{ hyper }}"
-  when: 
+  when:
     - guest_exists | failed
     - guest_type is not defined or guest_type == 'image'
 
@@ -101,7 +101,7 @@
     dest: "{{runtime_tempdir}}/virt-install-script-iso.sh.j2"
   become: yes
   delegate_to: "{{ hyper }}"
-  when: 
+  when:
     - guest_exists | failed
     - guest_type == 'iso'
 
@@ -163,9 +163,9 @@
     timeout: "{{ vm_install_timeout }}"
     search_regex: OpenSSH
   delegate_to: "{{ bastion_host | default(hyper) }}"
-  when: 
+  when:
     - guest_exists | failed
-    - guest_type is not defined or guest_type=='image' 
+    - guest_type is not defined or guest_type=='image'
 
   # This attempts to handle the common case where the new VM has a new and
   # unknown host key, because you just rebuilt this VM. Modern linux distro's
@@ -210,7 +210,7 @@
     state: absent
   become: yes
   delegate_to: "{{ hyper }}"
-  when: 
+  when:
     - guest_exists | failed
     - debug_mode is not defined or debug_mode=='false'
 ...
