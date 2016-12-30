@@ -1,0 +1,11 @@
+---
+- name: Destroy and undefine OpenStack VMs in hypervisor
+  shell: "virsh destroy {{ inventory_hostname }}; virsh undefine --remove-all-storage {{ inventory_hostname }}"
+  delegate_to: "{{ hyper }}"
+  register: command_result
+  failed_when:
+    - command_result.rc!=0
+    - not 'failed to get domain' in command_result.stderr
+  changed_when:
+    - command_result.rc==0
+...
