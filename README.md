@@ -30,7 +30,7 @@ guest_type: image          # Defaults to "kickstart"
 # cloud image uses ens3
 #eth_interface: ens3
 
-#environment: default-environment
+#vm_environment: default-environment
 
 # If you want to add all your users, use an `adminusers` dictionary as required
 # for ansible-role-users:
