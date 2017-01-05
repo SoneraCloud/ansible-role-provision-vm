@@ -69,7 +69,7 @@
 
   # This includes playbook defined optional hook to modify the image if needed
   - name: Include optional code to modify the image before launch
-    include: "{{ provision_vm_image_fixup_hook | default(omit) }}"
+    include: "{{ provision_vm_image_fixup_hook | default('empty.yml') }}"
     when: provision_vm_image_fixup_hook is defined
     become: yes
 
