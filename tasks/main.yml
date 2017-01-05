@@ -205,6 +205,27 @@
     - guest_type is defined
     - guest_type == 'image'
 
+- name: Eject the cloud-init iso
+  command: virsh change-media {{ inventory_hostname }} hda --eject
+  delegate_to: "{{ hyper }}"
+  become: yes
+  when:
+    - guest_type is defined
+    - guest_type == 'image'
+
+- name: Disable cloud-init services now they have done their job
+  service:
+    name: "{{ item }}"
+    enabled: false
+  with_items:
+    - cloud-config
+    - cloud-final
+    - cloud-init-local
+    - cloud-init
+  when:
+    - guest_type is defined
+    - guest_type == 'image'
+
 - name: cleanup temporary install files
   file:
     path: "{{ runtime_tempdir }}"
