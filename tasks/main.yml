@@ -205,24 +205,24 @@
     - guest_type is defined
     - guest_type == 'image'
 
-- name: Eject the cloud-init iso
-  command: virsh change-media {{ inventory_hostname }} hda --eject
+- name: Detach the cloud-init iso on next boot
+  command: virsh detach-disk {{ inventory_hostname }} hda --config
   delegate_to: "{{ hyper }}"
+  register: detach
+  changed_when: detach.stdout | search('Disk detached successfully')
+  failed_when:
+    - detach | failed
+    - not ( detach.stderr | search('No disk found whose source path or target is') )
   become: yes
   when:
     - guest_type is defined
     - guest_type == 'image'
 
-- name: Disable cloud-init and other irrelevant services
-  service:
-    name: "{{ item }}"
-    enabled: false
-  with_items:
-    - cloud-config
-    - cloud-final
-    - cloud-init-local
-    - cloud-init
-    - lm_sensors
+- name: Remove cloud init package if it is installed
+  package:
+    name: cloud-init
+    state: absent
+  become: yes
   when:
     - guest_type is defined
     - guest_type == 'image'
