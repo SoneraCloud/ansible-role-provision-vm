@@ -213,7 +213,7 @@
     - guest_type is defined
     - guest_type == 'image'
 
-- name: Disable cloud-init services now they have done their job
+- name: Disable cloud-init and other irrelevant services
   service:
     name: "{{ item }}"
     enabled: false
@@ -222,6 +222,7 @@
     - cloud-final
     - cloud-init-local
     - cloud-init
+    - lm_sensors
   when:
     - guest_type is defined
     - guest_type == 'image'
