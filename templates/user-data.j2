@@ -16,8 +16,10 @@ users:
 {% endif %}
 {% endif %}
 {% for adminuser in adminusers %}
+{% if not adminuser.state == 'absent' %}
   - name: {{ adminuser.name }}
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh-authorized-keys:
       - {{ adminuser.pubkey.split(' ')[:2] | join(" ") }}
+{% endif %}
 {% endfor %}
