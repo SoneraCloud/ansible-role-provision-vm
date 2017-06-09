@@ -15,7 +15,12 @@ virt-install \
 {% endfor %}
 {# Networks #}
 {% for bridge in bridges %}
+{% if bridge.guest_mac_address is defined %}
+  --network bridge={{ bridge.host_bridge }},mac={{ bridge.guest_mac_address }},model=virtio \
+{% elif bridge.host_bridge is defined %}
   --network bridge={{ bridge }},model=virtio \
+{% else %}
+{% endif %}
 {% endfor %}
   --noautoconsole \
 {# Start of guest_type specific code #}
