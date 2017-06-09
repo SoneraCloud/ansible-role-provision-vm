@@ -1,0 +1,11 @@
+---
+- name: cleanup temporary install files
+  file:
+    path: "{{ runtime_tempdir }}"
+    state: absent
+  become: yes
+  delegate_to: "{{ hyper }}"
+  when:
+    - guest_exists | failed
+    - debug_mode is not defined or debug_mode=='false'
+...
