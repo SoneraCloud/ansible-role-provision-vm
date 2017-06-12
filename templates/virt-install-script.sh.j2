@@ -6,6 +6,10 @@ virt-install \
   --os-type={{ os_type | default('linux') }} \
   --connect=qemu:///system \
   --autostart \
+  --events on_poweroff=preserve \
+  --graphics=vnc \
+{# Needed to launch VM in background #}
+  --noautoconsole \
 {# Disks #}
 {% for disk in disks %}
   --disk path={{ disk.path }},cache=writethrough,device=disk,bus={{ diskbus_type }},size={{ disk.size }},format={{ disk.format | default('raw') }} \
@@ -15,31 +19,28 @@ virt-install \
 {% endfor %}
 {# Networks #}
 {% for bridge in bridges %}
+{# We permit either a simple list of bridges, or a list of dicts with host_bridge and guest_mac_address keys #}
 {% if bridge.guest_mac_address is defined %}
   --network bridge={{ bridge.host_bridge }},mac={{ bridge.guest_mac_address }},model=virtio \
 {% elif bridge.host_bridge is defined %}
-  --network bridge={{ bridge }},model=virtio \
+  --network bridge={{ bridge.host_bridge }},model=virtio \
 {% else %}
+  --network bridge={{ bridge }},model=virtio \
 {% endif %}
 {% endfor %}
-  --noautoconsole \
 {# Start of guest_type specific code #}
 {% if guest_type == "kickstart" %}
-  --graphics=vnc,keymap="fi" \
   --wait={{ install_timeout }} \
   --location={{ install_url }} \
   --initrd-inject={{ runtime_tempdir }}/{{ inventory_hostname }}.ks \
   --extra-args="ks=file:/{{ inventory_hostname }}.ks nomodeset console=ttyS0"
 {% elif guest_type == "image" %}
   --disk path={{ image_path}}/{{ fqdn }}.iso,device=cdrom,perms=ro \
-  --events on_poweroff=preserve
 {% elif guest_type == "iso" %}
   --boot=hd,cdrom \
   --disk path={{ image_path}}/{{ fqdn }}.iso,device=cdrom,perms=ro \
-  --events on_poweroff=preserve \
   --os-variant=generic
 {% elif guest_type == "pxe" %}
   --pxe \
   --boot=network,hd \
-  --events on_poweroff=preserve 
 {% endif %}
