@@ -29,7 +29,7 @@
   when: guest_exists | failed
 
 # Now the VM should be booting and we can connect directly to the host for the first time
-- name: Get facts from new vm (image based deployments only)
+- name: Get facts from new vm
   setup:
   register: setup
   until: setup | succeeded
@@ -37,7 +37,7 @@
   delay: 20
   when: guest_type == 'image'
 
-- name: Cleanup files from guest)_type
+- name: Cleanup files from guest_type
   include: "{{ guest_type }}-cleanup.yml"
 
 - name: Cleanup common files
