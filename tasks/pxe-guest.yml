@@ -43,22 +43,16 @@
     become: yes
     when: extra_disk_size is defined
 
-  # This fact is picked up by the virt-install-command-pxe.j2 template and
-  # configures the VMs root disk
   - name: Set the root disk fact
     set_fact:
       disks:
         - path: "{{ image_path}}/{{ fqdn }}.qcow2"
           size: "{{ root_disk_size }}"
           format: qcow2
-    when: extra_disk_size is not defined
 
   - name: Set fact for root and extra disk
     set_fact:
-      disks:
-        - path: "{{ image_path}}/{{ fqdn }}.qcow2"
-          size: "{{ root_disk_size }}"
-          format: qcow2
+      extra_disks:
         - path: "{{ image_path}}/{{ fqdn }}_extra.qcow2"
           size: "{{ extra_disk_size }}"
           format: qcow2

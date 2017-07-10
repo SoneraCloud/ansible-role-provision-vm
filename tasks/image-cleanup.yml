@@ -1,0 +1,19 @@
+---
+- name: Detach the cloud-init iso on next boot
+  command: virsh detach-disk {{ inventory_hostname }} hda --config
+  delegate_to: "{{ hyper }}"
+  register: detach
+  changed_when: detach.stdout | search('Disk detached successfully')
+  failed_when:
+    - detach | failed
+    - not ( detach.stderr | search('No disk found whose source path or target is') )
+  become: yes
+  when: disable_cloud_init | default(true)
+
+- name: Remove cloud init package if it is installed
+  package:
+    name: cloud-init
+    state: absent
+  become: yes
+  when: disable_cloud_init | default(true)
+...

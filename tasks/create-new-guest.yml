@@ -1,0 +1,52 @@
+---
+- name: Create guest delegated to hyper
+  block:
+  - name: Ensure libvirt image directory is present
+    file:
+      path: "{{ image_path }}"
+      state: directory
+      mode: "0711"
+      owner: root
+      group: root
+    become: yes
+
+  - name: create a remote temp directory
+    command: mktemp -d "{{ provision_tempdir }}/provision_vm.XXXX"
+    register: temp_dir
+
+  - name: Set playbook temp_dir as fact
+    set_fact:
+      runtime_tempdir: "{{ temp_dir.stdout }}"
+
+  - name: Change ownership of temp directory
+    file:
+      path: "{{ runtime_tempdir }}"
+      state: directory
+      mode: 0700
+      owner: qemu
+      group: qemu
+    become: yes
+
+    # guest_type defaults to kickstart, but can be image, pxe or iso
+  - name: Prepare to start the guest
+    include: "{{ guest_type }}-guest.yml"
+
+  - name: Deploy script to deploy VM
+    template:
+      src: virt-install-script.sh.j2
+      dest: "{{runtime_tempdir}}/virt-install-script.sh.j2"
+      mode: 0770
+      owner: root
+      group: root
+    become: yes
+
+  - name: Start deployment of VM
+    shell: "{{runtime_tempdir}}/virt-install-script.sh.j2"
+    args:
+      creates: "/etc/libvirt/qemu/{{ inventory_hostname }}.xml"
+    become: yes
+    environment: "{{ env_virt_install | default(omit) }}"
+    register: virt_install_job
+
+  delegate_to: "{{ hyper }}"
+...

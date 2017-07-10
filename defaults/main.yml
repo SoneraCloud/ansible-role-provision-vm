@@ -3,6 +3,9 @@
 # Common settings ###############################
 #################################################
 
+# Default to a kickstart install of the guest
+guest_type: kickstart
+
 # Time to wait for install to finish (in minutes)
 install_timeout: "30"
 
@@ -30,17 +33,20 @@ vm_environment: default-environment
 # Timeout to wait for VM to be accessible by SSH
 vm_install_timeout: 300
 
-# Type of disk bus (virtio or scsi) 
+# Type of disk bus (virtio or scsi)
 diskbus_type: virtio
-
-#################################################
-# Kickstart based deployment settings ###########
-#################################################
 
 # Disks
 disks:
   - path: "{{ image_path }}/{{ fqdn }}.raw"
     size: "{{ root_disk_size }}"
+
+# Extra disks created and attached to the VM.
+extra_disks: []
+
+#################################################
+# Kickstart based deployment settings ###########
+#################################################
 
 # What packages to exclude in yum.conf at install time
 yum_exclude: ""
