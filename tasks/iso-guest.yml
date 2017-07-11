@@ -1,51 +1,43 @@
 ---
-
-# Most of this code will run on the hypervisor as defined by the hyper varible
-# We use a block to reduce repeating the 'delegate_to' for every task
 - block:
-
-  # Fetch ISO-image from HTTP server
-  # This image will not be as such used for VMs but is the base for possible modifications
   - name: Download specified image
     get_url:
       url: "{{ image_url_prefix }}/{{ image_name }}"
-      dest: "{{ image_path}}/{{ image_name }}"
+      dest: "{{ image_path }}/{{ image_name }}"
       mode: 0400
       owner: qemu
       backup: yes
     become: yes
 
-  # Copy VM-specific ISO image
-  - name: Copy the iso boot image for this guest
+  - name: Copy the ISO boot image
     copy:
       remote_src: true
-      src: "{{ image_path}}/{{ image_name }}"
-      dest: "{{ image_path}}/{{ fqdn }}.iso"
+      src: "{{ image_path }}/{{ image_name }}"
+      dest: "{{ image_path }}/{{ fqdn }}.iso"
       mode: 0400
       owner: qemu
       group: qemu
     become: yes
 
-  - name: Delete old hard disk image for this guest
+  - name: Delete old hard disk image
     file:
-      path: "{{ image_path}}/{{ fqdn }}.qcow2"
+      path: "{{ image_path }}/{{ fqdn }}.qcow2"
       state: absent
     become: yes
 
-  - name: Create new hard disk image for this guest
-    command: qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}.qcow2 {{ root_disk_size }}G
+  - name: Create new hard disk image
+    command: "qemu-img create -f qcow2 {{ image_path}}/{{ fqdn }}.qcow2 {{ root_disk_size }}G"
     become: yes
 
-  - name: Set owner and permissions of hard disk image
+  - name: Set ownership and permissions for the hard disk image
     file:
-      path: "{{ image_path}}/{{ fqdn }}.qcow2"
+      path: "{{ image_path }}/{{ fqdn }}.qcow2"
       owner: qemu
       group: qemu
       mode: 0600
     become: yes
 
-  # This fact is picked up by the virt-install-command-iso.j2 template and
-  # configures the VMs root disk
+  # Used by the virt-install-command-iso.j2 template to configure the root disk
   - name: Set the disk fact
     set_fact:
       disks:
@@ -53,6 +45,5 @@
           size: "{{ root_disk_size }}"
           format: qcow2
 
-  # End of block
   delegate_to: "{{ hyper }}"
 ...

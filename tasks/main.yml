@@ -1,16 +1,15 @@
 ---
-- name: Check hyper is defined
+- name: Check if hyper is defined
   assert:
     that: hyper is defined
     msg: "hyper must be set to a hypervisor host where you want VMs to run"
 
-# Most of this code will run on the hypervisor as defined by the hyper varible
-
-- name: gather hypervisor facts
+# Most of this code will run on the hypervisor as defined by the hyper variable
+- name: Gather hypervisor facts
   setup:
   delegate_to: "{{ hyper }}"
 
-- name: Check if VM exists already
+- name: Check if the VM already exists
   virt:
     name: "{{ inventory_hostname }}"
     command: get_xml
@@ -28,8 +27,8 @@
   include: wait-for-boot.yml
   when: guest_exists | failed
 
-# Now the VM should be booting and we can connect directly to the host for the first time
-- name: Get facts from new vm
+# Now the VM should be booting, and we can connect to it
+- name: Get facts from the new VM
   setup:
   register: setup
   until: setup | succeeded
@@ -37,9 +36,10 @@
   delay: 20
   when: guest_type == 'image'
 
-- name: Cleanup files from guest_type
+- name: Clean up when it is an image guest
   include: "{{ guest_type }}-cleanup.yml"
+  when: guest_type == 'image'
 
-- name: Cleanup common files
+- name: Commonly clean up
   include: cleanup.yml
 ...

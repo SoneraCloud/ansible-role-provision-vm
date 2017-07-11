@@ -1,20 +1,13 @@
 ---
-  # Force ansible to know the IP address of this host so it can connect
-  # This fixes things if you don't have the IP address in DNS or /etc/hosts.
-- name: Set ansible_host to the new guest IP address
-  set_fact: ansible_host={{ internal_ip }}
-  when: internal_ip is defined
-
-- name: wait for VM to become available before continuing
-  wait_for:
+- name: Wait for VM to be accessible via SSH
+  local_action: wait_for
+  args:
     port: 22
-    host: "{{ provisioning_wait_for_addr | default(ansible_host) }}"
-    timeout: "{{ vm_install_timeout }}"
+    host: "{{ ansible_host }}"
+    timeout: 600
     search_regex: OpenSSH
-  delegate_to: "{{ bastion_host | default(hyper) }}"
   when:
     - guest_exists | failed
-    - guest_type == 'kickstart' or guest_type =='image'
 
   # This attempts to handle the common case where the new VM has a new and
   # unknown host key, because you just rebuilt this VM. Modern linux distro's
@@ -24,20 +17,21 @@
   # https://dmsimard.com/2016/01/08/selinux-python-virtualenv-chroot-and-ansible-dont-play-nice/
   # Since this is a hassle this task is set to ignore errors. Pull requests
   # are welcome! ;-)
-- name: Clear known_hosts for new VM
-  known_hosts:
+- name: Remove VM's old host keys
+  local_action: known_hosts
+  args:
     name: "{{ item }}"
     state: absent
   when: guest_exists | failed
-  delegate_to: localhost
   with_items:
     - "{{ ansible_host }}"
     - "{{ inventory_hostname }}"
   ignore_errors: yes
 
-- name: Wait for ssh key configuration by cloud-init
-  pause: seconds=5
+- name: Wait for ssh key configured by cloud-init
+  pause:
+    seconds: 5
   when:
     - guest_exists | failed
-    - guest_type is defined
+    - guest_type == 'image'
 ...

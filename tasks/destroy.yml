@@ -1,7 +1,9 @@
 ---
-- name: Destroy and undefine OpenStack VMs in hypervisor
+- name: Destroy and undefine VM
   become: true
-  shell: "virsh destroy {{ inventory_hostname }}; virsh undefine --remove-all-storage {{ inventory_hostname }}"
+  shell: >
+    virsh destroy {{ inventory_hostname }}; \
+    virsh undefine --remove-all-storage {{ inventory_hostname }}
   delegate_to: "{{ hyper }}"
   register: command_result
   failed_when:
