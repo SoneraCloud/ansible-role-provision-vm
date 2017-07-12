@@ -7,7 +7,8 @@ virt-install \
   --connect=qemu:///system \
   --autostart \
   --events on_poweroff=preserve \
-  --graphics=vnc \
+  --graphics vnc,listen=0.0.0.0 \
+  --os-variant=generic \
 {# Needed to launch VM in background #}
   --noautoconsole \
 {# Disks #}
@@ -39,7 +40,6 @@ virt-install \
 {% elif guest_type == "iso" %}
   --boot=hd,cdrom \
   --disk path={{ image_path}}/{{ fqdn }}.iso,device=cdrom,perms=ro \
-  --os-variant=generic
 {% elif guest_type == "pxe" %}
   --pxe \
   --boot=network,hd \

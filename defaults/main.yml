@@ -1,39 +1,29 @@
 ---
-#################################################
-# Common settings ###############################
-#################################################
-
-# Default to a kickstart install of the guest
+#
+# Common settings
+#
+# Default guest VM type
 guest_type: kickstart
 
-# Time to wait for install to finish (in minutes)
-install_timeout: "30"
+# Timeout waiting for installation to finish (minutes)
+install_timeout: 30
 
-# Temp directory for storing provisioning related files
-provision_tempdir: "/tmp"
+# Default libvirt location
+libvirt_root: /var/lib/libvirt
 
-# Where libvirt stores images and vms
-libvirt_root: "/var/lib/libvirt"
-
-# Where to put images
+# Default virtual disk images location
 image_path: "{{ libvirt_root }}/images"
 
-# Root disk size (GB)
+# Default root disk size (GB)
 root_disk_size: 30
 
-# Default to a single vcpu
+# Default vCPU
 vcpus: 1
 
-# Default to 1GB of memory
+# Default memory
 ram: 1024
 
-# Default environment name (suggested use case: dev/test/prod)
-vm_environment: default-environment
-
-# Timeout to wait for VM to be accessible by SSH
-vm_install_timeout: 300
-
-# Type of disk bus (virtio or scsi)
+# Default disk bus type
 diskbus_type: virtio
 
 # Disks
@@ -41,13 +31,12 @@ disks:
   - path: "{{ image_path }}/{{ fqdn }}.raw"
     size: "{{ root_disk_size }}"
 
-# Extra disks created and attached to the VM.
+# Extra disks attached to VMs
 extra_disks: []
 
-#################################################
-# Kickstart based deployment settings ###########
-#################################################
-
+#
+# Kickstart-based deployment settings
+#
 # What packages to exclude in yum.conf at install time
 yum_exclude: ""
 
@@ -57,10 +46,9 @@ extra_packages: []
 # Empty environment for running virt-install
 env_virt_install: {}
 
-#################################################
-# Image based deployment settings ###############
-#################################################
-
+#
+# Image-based deployment settings
+#
 # Default download location of CentOS image
 image_url_prefix: http://cloud.centos.org/centos/7/images/
 image_name: CentOS-7-x86_64-GenericCloud.qcow2
@@ -81,5 +69,5 @@ resolv_nameservers:
 #   https://github.com/CSC-IT-Center-for-Science/ansible-role-users
 #
 # You can also add a custom user to your guests for bootstrapping
-#bootstrap_user: bootstrap
-#bootstrap_ssh_key: ""
+# bootstrap_user: bootstrap
+# bootstrap_ssh_key: ""

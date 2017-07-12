@@ -1,5 +1,5 @@
 ---
-- name: cleanup temporary install files
+- name: Cleanup the temporary directory used when provisioning
   file:
     path: "{{ runtime_tempdir }}"
     state: absent
