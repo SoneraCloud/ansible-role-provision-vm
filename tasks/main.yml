@@ -22,10 +22,14 @@
 - name: Create a new guest if needed
   include: create-new-guest.yml
   when: guest_exists | failed
+  # Skip the whole include, not all the tasks
+  static: False
 
 - name: Wait for boot if needed
   include: wait-for-boot.yml
   when: guest_exists | failed
+  # Skip the whole include, not all the tasks
+  static: False
 
 # Now the VM should be booting, and we can connect to it
 - name: Get facts from the new VM
