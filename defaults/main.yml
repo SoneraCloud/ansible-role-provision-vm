@@ -34,6 +34,9 @@ disks:
 # Extra disks attached to VMs
 extra_disks: []
 
+# Avoid neededing to set FQDN in case you use FQDN's in your inventory
+fqdn: "{{ inventory_hostname }}"
+
 #
 # Kickstart-based deployment settings
 #
@@ -66,7 +69,7 @@ resolv_nameservers:
 #
 # If you want to add all your users, use an `adminusers` dictionary as required
 # for ansible-role-users:
-#   https://github.com/CSC-IT-Center-for-Science/ansible-role-users
+#   https://github.com/CSCfi/ansible-role-users
 #
 # You can also add a custom user to your guests for bootstrapping
 # bootstrap_user: bootstrap
