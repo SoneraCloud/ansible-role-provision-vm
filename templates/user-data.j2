@@ -15,11 +15,11 @@ users:
       - {{ bootstrap_ssh_key }}
 {% endif %}
 {% endif %}
-{% for adminuser in adminusers %}
-{% if not adminuser.state == 'absent' %}
-  - name: {{ adminuser.name }}
+{% for user in admin_list_of_user_lists %}
+{% if not user.state == 'absent' %}
+  - name: {{ user.name }}
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh-authorized-keys:
-      - {{ adminuser.pubkey.split(' ')[:2] | join(" ") }}
+      - {{ user.pubkey.split(' ')[:2] | join(" ") }}
 {% endif %}
 {% endfor %}

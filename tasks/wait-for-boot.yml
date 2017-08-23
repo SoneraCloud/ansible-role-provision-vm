@@ -30,7 +30,7 @@
 
 - name: Wait for ssh key configured by cloud-init
   pause:
-    seconds: 5
+    seconds: 10
   when:
     - guest_exists | failed
     - guest_type == 'image'

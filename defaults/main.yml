@@ -60,6 +60,7 @@ timezone: Europe/Helsinki
 
 # List of admin users to add to new VM
 adminusers: []
+admin_list_of_user_lists: "{{ adminusers }}"
 
 # DNS servers
 resolv_nameservers:
