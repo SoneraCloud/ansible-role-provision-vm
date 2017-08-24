@@ -56,18 +56,15 @@ env_virt_install: {}
 image_url_prefix: http://cloud.centos.org/centos/7/images/
 image_name: CentOS-7-x86_64-GenericCloud.qcow2
 
+# Path to an ansible tasks file which can modify images before VMs are created. For example to work round bugs in bad upstream images.
+provision_vm_image_fixup_hook: "empty-image-fixup-hook.yml"
+
 timezone: Europe/Helsinki
 
 # List of admin users to add to new VM
 adminusers: []
 admin_list_of_user_lists: "{{ adminusers }}"
 
-# DNS servers
-resolv_nameservers:
-  - 8.8.4.4
-  - 8.8.8.8
-
-#
 # If you want to add all your users, use an `adminusers` dictionary as required
 # for ansible-role-users:
 #   https://github.com/CSCfi/ansible-role-users
@@ -75,3 +72,9 @@ resolv_nameservers:
 # You can also add a custom user to your guests for bootstrapping
 # bootstrap_user: bootstrap
 # bootstrap_ssh_key: ""
+
+# DNS servers
+resolv_nameservers:
+  - 8.8.4.4
+  - 8.8.8.8
+
