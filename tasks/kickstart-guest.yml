@@ -2,7 +2,7 @@
 - name: Generate kickstart file
   template:
     src: kickstart.cfg
-    dest: {{ runtime_tempdir }}/{{ inventory_hostname }}.ks"
+    dest: "{{ runtime_tempdir }}/{{ inventory_hostname }}.ks"
   become: yes
   delegate_to: "{{ hyper }}"
 ...
