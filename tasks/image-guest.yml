@@ -1,7 +1,7 @@
 ---
 - block:
   - name: Ensure guestfish is installed
-    yum:
+    package:
       name: libguestfs-tools
       state: installed
     become: yes
@@ -11,7 +11,7 @@
       url: "{{ image_url_prefix }}/{{ image_name }}"
       dest: "{{ image_path}}/{{ image_name }}"
       mode: 0400
-      owner: qemu
+      owner: "{{ owner }}"
       backup: yes
     become: yes
 
@@ -20,8 +20,8 @@
       src: "{{ item }}.j2"
       dest: "{{ runtime_tempdir }}/{{ item }}"
       mode: 0400
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     with_items:
       - meta-data
       - user-data
@@ -38,8 +38,8 @@
     file:
       name: "{{ runtime_tempdir }}/cloud-init.iso"
       mode: 0400
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     become: yes
 
   - name: Copy the ISO and qcow images
@@ -48,8 +48,8 @@
       src: "{{ item.src }}"
       dest: "{{ image_path }}/{{ fqdn }}.{{ item.format }}"
       mode: "{{ item.mode }}"
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     with_items:
       - src: "{{ runtime_tempdir }}/cloud-init.iso"
         format: iso
@@ -68,8 +68,8 @@
       src: modify-centos-image.guestfish.j2
       dest: "{{ runtime_tempdir }}/modify-centos-image.guestfish"
       mode: 0600
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     become: yes
     when:
       - "'centos' in image_name.lower()"

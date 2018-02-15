@@ -78,3 +78,5 @@ resolv_nameservers:
   - 8.8.4.4
   - 8.8.8.8
 
+owner: qemu
+group: qemu

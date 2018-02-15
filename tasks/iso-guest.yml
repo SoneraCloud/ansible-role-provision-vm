@@ -5,7 +5,7 @@
       url: "{{ image_url_prefix }}/{{ image_name }}"
       dest: "{{ image_path }}/{{ image_name }}"
       mode: 0400
-      owner: qemu
+      owner: "{{ owner }}"
       backup: yes
     become: yes
 
@@ -15,8 +15,8 @@
       src: "{{ image_path }}/{{ image_name }}"
       dest: "{{ image_path }}/{{ fqdn }}.iso"
       mode: 0400
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     become: yes
 
   - name: Delete old hard disk image
@@ -32,8 +32,8 @@
   - name: Set ownership and permissions for the hard disk image
     file:
       path: "{{ image_path }}/{{ fqdn }}.qcow2"
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
       mode: 0600
     become: yes
 

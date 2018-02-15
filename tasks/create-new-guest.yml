@@ -23,8 +23,8 @@
       path: "{{ runtime_tempdir }}"
       state: directory
       mode: 0700
-      owner: qemu
-      group: qemu
+      owner: "{{ owner }}"
+      group: "{{ group }}"
     become: yes
 
   # guest_type defaults to kickstart, but can be image, pxe, or iso
